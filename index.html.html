@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POSIBLE · IA en el diseño de materiales didácticos</title>
+<style>
+:root{
+ --bg:#f4eee4; --paper:#fffaf3; --ink:#112b40; --muted:#5e686d; --line:#d8cfc4;
+ --green:#456e63; --gold:#c88c2b; --rose:#a75d66; --coral:#d87557; --blue:#4b7b99; --violet:#78628f;
+ --shadow:0 20px 70px rgba(31,42,52,.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(circle at 50% 42%,#fffdf8 0,#f7f1e8 42%,#f1e9de 100%);
+ color:var(--ink);font-family:Inter,Arial,sans-serif}
+button,a{font:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid #243e55;outline-offset:3px}
+.app{max-width:1500px;margin:auto;padding:28px 36px 34px}
+.top{display:grid;grid-template-columns:1.25fr .75fr;gap:34px;align-items:start}
+.brand h1{font-size:clamp(3.6rem,8vw,7.5rem);line-height:.78;letter-spacing:-.075em;margin:12px 0 0}
+.kicker{font-size:.76rem;letter-spacing:.16em;font-weight:800;margin-top:20px}
+.intro{max-width:670px;font-family:Georgia,serif;font-size:clamp(1.08rem,1.5vw,1.35rem);line-height:1.48;margin:24px 0 0}
+.intro strong{font-family:Inter,Arial,sans-serif;font-size:.95em}
+.choice{justify-self:end;max-width:410px;margin-top:12px}
+.choice button{border:1px solid #cdb794;background:#f8ecda;color:var(--ink);border-radius:999px;padding:12px 18px;cursor:pointer;font-weight:700}
+.choicebox{display:none;margin-top:12px;background:#fffaf3bb;backdrop-filter:blur(10px);padding:17px 19px;border-left:2px solid #c99959;line-height:1.48;color:#46535b;font-size:.9rem}
+.choicebox.on{display:block}
+.choicebox p{margin:.25rem 0 .75rem}.choicebox p:last-child{margin-bottom:.1rem}
+
+.network{
+ position:relative;height:930px;margin-top:8px;isolation:isolate;padding-bottom:110px;
+ background:
+   radial-gradient(circle at 37% 18%,rgba(69,110,99,.08),transparent 20%),
+   radial-gradient(circle at 78% 21%,rgba(200,140,43,.09),transparent 22%),
+   radial-gradient(circle at 18% 50%,rgba(167,93,102,.08),transparent 20%),
+   radial-gradient(circle at 82% 58%,rgba(216,117,87,.08),transparent 20%),
+   radial-gradient(circle at 34% 84%,rgba(75,123,153,.08),transparent 21%),
+   radial-gradient(circle at 70% 84%,rgba(120,98,143,.08),transparent 21%);
+ border-radius:42px;
+}
+.network:before{
+ content:"";position:absolute;inset:8% 12% 11% 12%;z-index:-2;pointer-events:none;
+ background:
+  radial-gradient(ellipse at 45% 44%,rgba(255,255,255,.78),rgba(255,255,255,0) 56%);
+ filter:blur(2px);
+}
+.network svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible}
+.path{
+ fill:none;stroke-width:2.1;opacity:.42;transition:opacity .25s,stroke-width .25s,filter .25s;
+ stroke-linecap:round
+}
+.path.cross{stroke-dasharray:2 10;opacity:.24}
+.path.active{opacity:.94;stroke-width:3.1;filter:drop-shadow(0 0 5px rgba(24,42,56,.12))}
+.node{
+ --node:#456e63;
+ position:absolute;z-index:3;width:250px;height:172px;border:0;color:#fff;cursor:pointer;padding:29px 31px;
+ background:var(--node);
+ border-radius:47% 53% 46% 54%/59% 43% 57% 41%;
+ text-align:left;
+ box-shadow:0 18px 48px rgba(44,51,57,.15), inset 0 1px 0 rgba(255,255,255,.12);
+ transition:transform .24s,filter .24s,opacity .24s,box-shadow .24s;
+}
+.node:before,.node:after{
+ content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;
+ background:color-mix(in srgb,var(--node) 58%,transparent);
+ opacity:.30;filter:blur(.2px);transition:.25s
+}
+.node:before{width:122%;height:114%;left:-12%;top:-8%;transform:rotate(-9deg)}
+.node:after{width:88%;height:132%;right:-8%;bottom:-18%;transform:rotate(14deg);opacity:.18}
+.node:hover{
+ transform:translateY(-5px) scale(1.045);
+ filter:saturate(1.06);
+ box-shadow:0 26px 58px rgba(44,51,57,.18), inset 0 1px 0 rgba(255,255,255,.16)
+}
+.node.dim{opacity:.28;filter:saturate(.5)}
+.node.related{box-shadow:0 26px 62px rgba(44,51,57,.22),0 0 0 5px rgba(255,255,255,.42)}
+.node b{display:block;font-size:1.1rem;line-height:1.06;letter-spacing:.015em}
+.node small{display:block;margin-top:8px;line-height:1.3;font-size:.84rem;opacity:.95}
+.node .verbs{display:block;margin-top:10px;font-size:.69rem;line-height:1.45;opacity:.76}
+.center{
+ --node:#112b40;left:50%;top:47%;transform:translate(-50%,-50%);
+ width:226px;height:194px;text-align:center;padding:55px 27px 24px;
+ border-radius:52% 48% 55% 45%/47% 56% 44% 53%;
+ box-shadow:0 25px 68px rgba(17,43,64,.22)
+}
+.center:before{width:126%;height:126%;left:-13%;top:-13%;background:rgba(17,43,64,.12)}
+.center:after{width:150%;height:70%;left:-25%;bottom:-20%;background:rgba(17,43,64,.08)}
+.center:hover{transform:translate(-50%,-53%) scale(1.04)}
+.green{--node:var(--green);left:27%;top:5%}
+.gold{--node:var(--gold);right:10%;top:9%}
+.rose{--node:var(--rose);left:4%;top:37%}
+.coral{--node:var(--coral);right:2%;top:46%}
+.blue{--node:var(--blue);left:20%;bottom:20%}
+.violet{--node:var(--violet);right:22%;bottom:20%}
+.micro{
+ position:absolute;z-index:4;color:#33464f;background:rgba(255,250,243,.96);
+ padding:10px 14px;border-radius:18px;font:italic .72rem/1.3 Georgia,serif;
+ box-shadow:0 7px 20px rgba(50,60,68,.08);border:1px solid rgba(205,194,182,.58);
+ backdrop-filter:blur(4px);max-width:225px
+}
+.micro:before{
+ content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+ background:#7e8e92;margin-right:7px;vertical-align:middle;opacity:.65
+}
+/* Una leyenda por nodo: cada una ocupa un espacio libre de la trama */
+.m1{left:11%;top:10%;max-width:205px}       /* pensar y explorar */
+.m2{right:1.5%;top:28%;max-width:205px}     /* hacer visible */
+.m3{left:8%;bottom:4%;max-width:225px}      /* probar y modelizar */
+.m4{left:1.5%;top:61%;max-width:225px}      /* palabras */
+.m5{right:1.5%;top:68%;max-width:215px}     /* voz y movimiento */
+.m6{right:22%;bottom:4%;max-width:245px}    /* participar */
+.orbit{position:absolute;z-index:1;width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid rgba(17,43,64,.25);box-shadow:0 3px 9px rgba(17,43,64,.12)}
+.o1{left:40%;top:26%}.o2{left:59%;top:24%}.o3{left:29%;top:49%}.o4{right:27%;top:50%}.o5{left:46%;bottom:22%}.o6{right:38%;bottom:20%}
+.guide{text-align:center;margin:34px auto 28px;max-width:800px;color:#5d676a;font-size:.84rem;line-height:1.48;position:relative;z-index:5}
+.legend{display:flex;gap:13px;align-items:center;justify-content:center;flex-wrap:wrap;margin:8px 0 24px;font-size:.73rem;color:#626c70}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}.free{background:#5b8a69}.limited{background:#d2a343}.inst{background:#7a7998}
+.footer{border-top:1px solid #cfc5b9;padding:18px 0 0;display:flex;justify-content:space-between;gap:25px;color:#5d666b;font-size:.8rem}
+.footer strong{color:var(--ink)}
+
+.drawer{position:fixed;inset:0 0 0 auto;width:min(610px,96vw);height:100vh;background:var(--paper);z-index:40;box-shadow:-30px 0 75px rgba(22,38,53,.18);transform:translateX(104%);transition:.32s;overflow:auto}
+.drawer.on{transform:none}
+.drawer-inner{padding:28px 30px 55px}.close{position:sticky;top:16px;float:right;z-index:2;border:1px solid var(--line);background:#fff;border-radius:50%;width:39px;height:39px;cursor:pointer;font-size:1.35rem;color:var(--ink)}
+.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.68rem;color:#6e777a;margin-top:54px;font-weight:700}
+.drawer h2{font:500 clamp(2rem,5vw,3rem)/1.03 Georgia,serif;margin:7px 0 10px}.lead{font-size:.98rem;line-height:1.55;color:#536067;margin-bottom:22px}
+.operation{border-top:1px solid var(--line);padding:15px 0}.ophead{width:100%;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:0;background:transparent;color:var(--ink);cursor:pointer;text-align:left;padding:3px 0}
+.ophead b{font-size:1rem}.ophead span{font-size:1.25rem}.opbody{display:none;padding:12px 0 5px}.opbody.on{display:block}
+.opdesc{font:italic .92rem/1.5 Georgia,serif;color:#59646a;margin:0 0 13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid #cfc5ba;background:#fff;border-radius:999px;padding:8px 11px;cursor:pointer;font-size:.8rem;color:var(--ink)}
+.chip:hover{background:#f0e9df}.linknote{margin-top:16px;padding:12px 14px;background:#f1e9de;border-radius:11px;font-size:.79rem;line-height:1.45;color:#576268}
+.nodecrit{margin-top:25px;padding:16px 17px;border-left:3px solid var(--accent,var(--ink));background:#f3ece2;font-size:.85rem;line-height:1.47}
+.nodecrit b{display:block;margin-bottom:5px}
+
+.modalwrap{position:fixed;inset:0;background:rgba(17,35,51,.42);backdrop-filter:blur(5px);z-index:70;display:none;align-items:center;justify-content:center;padding:18px}
+.modalwrap.on{display:flex}.modal{width:min(700px,96vw);max-height:90vh;overflow:auto;background:#fffaf3;border-radius:22px;box-shadow:var(--shadow);padding:26px 29px 30px;position:relative}
+.modal .x{position:absolute;right:20px;top:18px;border:0;background:transparent;font-size:1.5rem;cursor:pointer}
+.tooltop{display:flex;gap:14px;align-items:center;padding-right:40px}.toolmark{width:42px;height:42px;border-radius:13px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.modal h3{font:500 2rem/1 Georgia,serif;margin:0}.tag{display:inline-flex;margin-top:7px;align-items:center;gap:6px;font-size:.7rem;color:#59656a}
+.modal h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;margin:22px 0 7px;color:#626c70}
+.modal p{line-height:1.52;margin:0;color:#45545b;font-size:.91rem}.question{font:italic 1.02rem/1.5 Georgia,serif !important;color:var(--ink)!important;background:#f2e9dc;padding:15px 17px;border-radius:13px}
+.connections{display:flex;flex-wrap:wrap;gap:7px}.conn{border:1px solid #d5cabe;padding:7px 10px;border-radius:999px;font-size:.72rem}
+.visit{display:inline-block;margin-top:23px;text-decoration:none;background:var(--ink);color:#fff;border-radius:999px;padding:11px 16px;font-size:.82rem;font-weight:700}
+.special{margin-top:16px;border:1px solid #d7cbbb;border-radius:14px;padding:14px}.special b{font-size:.8rem}.special div{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.special span{font-size:.7rem;border-radius:999px;background:#f1e9df;padding:6px 8px}
+.note{margin-top:18px;font-size:.7rem!important;color:#727a7e!important}
+
+@media(max-width:900px){
+ .app{padding:22px 18px 28px}.top{grid-template-columns:1fr}.choice{justify-self:start;margin:0}
+ .network{height:auto;display:grid;grid-template-columns:1fr;gap:10px;margin:30px 0}
+ .network svg,.micro,.orbit{display:none}.node,.center{position:static;width:100%;height:auto;min-height:116px;border-radius:18px;transform:none}.center{order:-1;padding:28px;text-align:left}
+ .center:hover,.node:hover{transform:none}.node:before,.node:after{display:none}.guide{text-align:center;margin:34px auto 28px;max-width:800px;color:#5d676a;font-size:.84rem;line-height:1.48;position:relative;z-index:5}.footer{display:block;line-height:1.7}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>POSIBLE</h1>
+      <div class="kicker">IA EN EL DISEÑO DE MATERIALES DIDÁCTICOS</div>
+      <p class="intro">Explorá una trama de posibilidades para <strong>pensar, crear y transformar</strong> tu material. No empieces por la herramienta: empezá por aquello que querés hacer posible.</p>
+    </div>
+    <div class="choice">
+      <button onclick="document.querySelector('.choicebox').classList.toggle('on')">＋ Antes de elegir</button>
+      <div class="choicebox">
+        <p><b>¿Qué quiero que pueda hacer quien aprende?</b></p>
+        <p>¿Qué modo —texto, imagen, sonido, interacción, movimiento— construye mejor ese significado?</p>
+        <p>¿La IA amplía una posibilidad de diseño o simplemente automatiza algo?</p>
+        <p>¿Qué decisiones necesito conservar como autor/a? ¿Qué necesito verificar, editar o reelaborar?</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="network" aria-label="Trama de posibilidades">
+    <svg viewBox="0 0 1250 720" preserveAspectRatio="none" aria-hidden="true">
+      <path class="path" data-a="center" data-b="think" stroke="#456e63" d="M625 340 C535 240 475 160 465 105"/>
+      <path class="path" data-a="center" data-b="visual" stroke="#c88c2b" d="M625 340 C770 210 900 185 1015 140"/>
+      <path class="path" data-a="center" data-b="words" stroke="#a75d66" d="M625 340 C470 335 330 330 190 350"/>
+      <path class="path" data-a="center" data-b="motion" stroke="#d87557" d="M625 340 C805 350 975 405 1110 455"/>
+      <path class="path" data-a="center" data-b="model" stroke="#4b7b99" d="M625 340 C560 485 460 560 375 635"/>
+      <path class="path" data-a="center" data-b="interact" stroke="#78628f" d="M625 340 C710 470 820 575 900 640"/>
+      <path class="path cross" data-a="think" data-b="visual" stroke="#806f62" d="M465 105 C665 55 825 75 1015 140"/>
+      <path class="path cross" data-a="words" data-b="think" stroke="#806f62" d="M190 350 C285 235 365 160 465 105"/>
+      <path class="path cross" data-a="visual" data-b="interact" stroke="#806f62" d="M1015 140 C930 315 950 505 900 640"/>
+      <path class="path cross" data-a="motion" data-b="interact" stroke="#806f62" d="M1110 455 C1040 530 980 575 900 640"/>
+      <path class="path cross" data-a="model" data-b="interact" stroke="#806f62" d="M375 635 C525 545 695 555 900 640"/>
+      <path class="path cross" data-a="words" data-b="model" stroke="#806f62" d="M190 350 C365 475 470 530 375 635"/>
+    </svg>
+    <span class="orbit o1"></span><span class="orbit o2"></span><span class="orbit o3"></span><span class="orbit o4"></span><span class="orbit o5"></span><span class="orbit o6"></span>
+
+    <button class="node center" data-key="center" onclick="openNode('center')"><b>MI MDD</b><small>en construcción</small><span class="verbs">No hay un punto de partida obligatorio.</span></button>
+    <button class="node green" data-key="think" onclick="openNode('think')"><b>PENSAR<br>Y EXPLORAR</b><small>abrir caminos</small><span class="verbs">preguntar · buscar · relacionar · tensionar</span></button>
+    <button class="node gold" data-key="visual" onclick="openNode('visual')"><b>HACER VISIBLE</b><small>visualizar y representar</small><span class="verbs">imaginar · diagramar · transformar · editar</span></button>
+    <button class="node rose" data-key="words" onclick="openNode('words')"><b>TRABAJAR<br>CON LAS PALABRAS</b><small>escribir y transformar</small><span class="verbs">escribir · adaptar · sintetizar · reorganizar</span></button>
+    <button class="node coral" data-key="motion" onclick="openNode('motion')"><b>DAR VOZ<br>Y MOVIMIENTO</b><small>sonorizar, narrar, animar, editar</small><span class="verbs">narrar · escuchar · musicalizar · montar</span></button>
+    <button class="node violet" data-key="interact" onclick="openNode('interact')"><b>HACER<br>PARTICIPAR</b><small>crear interacción</small><span class="verbs">conversar · decidir · explorar · intervenir</span></button>
+    <button class="node blue" data-key="model" onclick="openNode('model')"><b>PROBAR<br>Y MODELIZAR</b><small>modelizar y experimentar</small><span class="verbs">calcular · graficar · simular · experimentar</span></button>
+
+    <span class="micro m1">Una pregunta puede abrir otros caminos.</span>
+    <span class="micro m2">Una imagen también puede pensar.</span>
+    <span class="micro m3">Datos, modelos y simulaciones también construyen sentido.</span>
+    <span class="micro m4">Un texto puede ser punto de partida de muchas otras formas.</span>
+    <span class="micro m5">Tu material también puede escucharse y moverse.</span>
+    <span class="micro m6">El material puede invitar a interactuar, no solo a mirar o leer.</span>
+  </main>
+
+  <div class="guide">Elegí un nodo, explorá una operación y recién entonces mirá qué herramientas podrían ayudarte. Una misma herramienta puede aparecer en varios lugares de la trama.</div>
+  <div class="legend"><span><i class="dot free"></i> acceso gratuito</span><span><i class="dot limited"></i> gratuito con límites / freemium</span><span><i class="dot inst"></i> depende del acceso institucional o del entorno</span></div>
+  <footer class="footer"><span><strong>Diseñar no es generar.</strong> Explorá · elegí · combiná · transformá · revisá · dá sentido.</span><span>Las condiciones de acceso pueden cambiar. Verificá cada herramienta antes de incorporarla a una propuesta.</span></footer>
+</div>
+
+<aside class="drawer" id="drawer"><div class="drawer-inner"><button class="close" onclick="closeNode()" aria-label="Cerrar">×</button><div id="drawerContent"></div></div></aside>
+<div class="modalwrap" id="modalwrap" onclick="if(event.target===this)closeTool()"><article class="modal" id="modal"></article></div>
+
+<script>
+const tools={
+"ChatGPT":{mark:"GPT",access:"limited",accessText:"Gratuito con límites / planes pagos",url:"https://chatgpt.com/",what:"Asistente multimodal para conversar, escribir, analizar, programar, trabajar con archivos y producir o editar imágenes.",use:"Cuando necesitás sostener una conversación de diseño, generar alternativas, transformar un contenido o combinar modos de representación.",q:"¿La respuesta está ampliando una decisión de diseño o está reemplazando una decisión que necesitabas tomar vos?",conn:["Pensar y explorar","Palabras","Hacer visible","Hacer participar"]},
+"Claude":{mark:"CL",access:"limited",accessText:"Gratuito con límites / planes pagos",url:"https://claude.ai/",what:"Asistente conversacional especialmente útil para trabajo con textos extensos, análisis, escritura y desarrollo de artefactos digitales.",use:"Cuando el material exige organizar información, revisar estructura, reformular o trabajar iterativamente sobre una producción.",q:"¿La fluidez del texto está ocultando decisiones conceptuales que todavía necesitás revisar?",conn:["Pensar y explorar","Palabras","Hacer participar"]},
+"Gemini":{mark:"GE",access:"limited",accessText:"Gratuito con límites / planes pagos",url:"https://gemini.google.com/",what:"Asistente multimodal de Google que permite trabajar con texto, imágenes, archivos y distintos tipos de producción.",use:"Cuando querés explorar alternativas, combinar lenguajes o desarrollar una representación a partir de instrucciones y materiales previos.",q:"¿Qué parte de la producción necesitás verificar o reelaborar antes de convertirla en material didáctico?",conn:["Pensar y explorar","Palabras","Hacer visible","Hacer participar"]},
+"DeepSeek":{mark:"DS",access:"free",accessText:"Acceso gratuito; pueden existir límites de uso",url:"https://chat.deepseek.com/",what:"Asistente conversacional orientado a razonamiento, escritura y resolución de problemas.",use:"Cuando querés contrastar respuestas, pedir explicaciones alternativas o trabajar sobre problemas lógicos y textuales.",q:"¿Estás contrastando la respuesta con otras fuentes o convirtiendo una explicación plausible en evidencia?",conn:["Pensar y explorar","Palabras"]},
+"Meta AI":{mark:"MA",access:"free",accessText:"Acceso gratuito según región y plataforma",url:"https://www.meta.ai/",what:"Asistente multimodal integrado al ecosistema Meta, disponible también desde algunos servicios cotidianos.",use:"Cuando interesa explorar una IA accesible desde entornos que muchas personas ya utilizan.",q:"¿La facilidad de acceso es un criterio suficiente para elegirla para tu material?",conn:["Pensar y explorar"]},
+"Perplexity":{mark:"PX",access:"limited",accessText:"Gratuito con límites / planes pagos",url:"https://www.perplexity.ai/",what:"Herramienta de búsqueda asistida por IA que responde incorporando referencias y enlaces a fuentes.",use:"Cuando necesitás abrir una búsqueda, localizar información y seguir pistas hacia las fuentes originales.",q:"¿Las fuentes citadas sostienen realmente la afirmación que aparece en la respuesta?",conn:["Pensar y explorar","Palabras"]},
+"NotebookLM":{mark:"NL",access:"limited",accessText:"Acceso gratuito con límites; opciones ampliadas",url:"https://notebooklm.google.com/",what:"Entorno para explorar un corpus de fuentes seleccionado por vos y transformarlo en diferentes representaciones.",use:"Cuando querés preguntar, relacionar, sintetizar o transformar documentos y fuentes que forman parte de tu propio corpus.",q:"¿Qué queda fuera de la mirada de la IA porque no está incluido en el corpus que seleccionaste?",conn:["Pensar y explorar","Palabras","Hacer visible","Voz y movimiento"],special:["preguntas y conversaciones","síntesis e informes","guías / FAQ / cronologías","mapas mentales","Audio Overviews","Video Overviews"]},
+"Character.AI":{mark:"CA",access:"limited",accessText:"Acceso gratuito con opciones pagas",url:"https://character.ai/",what:"Plataforma para crear y conversar con personajes o interlocutores configurados con determinadas voces y rasgos.",use:"Cuando querés explorar perspectivas, simular diálogos o imaginar una experiencia conversacional dentro del material.",q:"¿La voz simulada abre preguntas o está siendo presentada como si fuera un testimonio auténtico?",conn:["Pensar y explorar","Hacer participar"]},
+"ChatGPT Images":{mark:"IMG",access:"limited",accessText:"Disponible según límites y plan de ChatGPT",url:"https://chatgpt.com/",what:"Generación y edición de imágenes a partir de lenguaje natural dentro de ChatGPT.",use:"Para crear escenas, metáforas visuales, representaciones conceptuales o modificar una imagen existente.",q:"¿La imagen representa la relación conceptual que necesitás o solo produce una ilustración atractiva?",conn:["Hacer visible","Palabras"]},
+"Adobe Firefly":{mark:"AF",access:"limited",accessText:"Créditos y funciones gratuitas limitadas",url:"https://firefly.adobe.com/",what:"Estudio creativo de Adobe para generar y editar imagen, video y audio mediante IA.",use:"Cuando necesitás experimentar con producción visual o audiovisual y conservar posibilidades de edición.",q:"¿Qué decisiones de composición, estilo y representación seguís tomando vos después de generar?",conn:["Hacer visible","Voz y movimiento"]},
+"Napkin AI":{mark:"NA",access:"free",accessText:"Plan gratuito con créditos semanales",url:"https://www.napkin.ai/",what:"Convierte texto en diagramas, mapas, infografías y otras representaciones visuales editables.",use:"Cuando una idea, relación o proceso podría comprenderse mejor al pasar del texto a una organización visual.",q:"¿La herramienta jerarquizó y relacionó los conceptos como lo requiere tu explicación o simplificó relaciones importantes?",conn:["Palabras","Hacer visible"]},
+"Canva IA":{mark:"CV",access:"limited",accessText:"Plan gratuito; algunas funciones de IA tienen límites",url:"https://www.canva.com/es_ar/canva-ia/",what:"Conjunto de funciones de IA integradas a un entorno de diseño visual, presentaciones, imagen, video y otros formatos.",use:"Cuando necesitás combinar generación con composición, edición y armado final de una pieza.",q:"¿La plantilla está organizando el sentido del material por vos o está al servicio de una decisión pedagógica previa?",conn:["Hacer visible","Voz y movimiento"]},
+"Gamma":{mark:"GA",access:"limited",accessText:"Créditos gratuitos iniciales / planes pagos",url:"https://gamma.app/",what:"Herramienta para generar y editar presentaciones, documentos y piezas web a partir de contenido.",use:"Cuando querés experimentar con la organización de información en una pieza navegable o presentacional.",q:"¿La estructura generada corresponde a la lógica de tu contenido o a una plantilla narrativa genérica?",conn:["Hacer visible","Hacer participar","Palabras"]},
+"ElevenLabs":{mark:"11",access:"limited",accessText:"Plan gratuito con límites / planes pagos",url:"https://elevenlabs.io/",what:"Plataforma de generación de voz, narración, doblaje y recursos de audio mediante IA.",use:"Cuando querés que un contenido también pueda escucharse o necesitás trabajar la expresividad y la presencia de la voz.",q:"¿Qué cambia en la interpretación del contenido cuando elegís una voz, un ritmo y una entonación determinados?",conn:["Voz y movimiento"]},
+"Suno":{mark:"SU",access:"free",accessText:"Generación gratuita diaria; derechos y funciones varían según plan",url:"https://suno.com/es",what:"Generador de música y canciones mediante descripciones, letras o ideas musicales.",use:"Cuando el sonido o la música pueden construir clima, ritmo, memoria o una capa expresiva del material.",q:"¿La música agrega sentido o solo ambienta? ¿Qué derechos de uso corresponden al plan con el que fue creada?",conn:["Voz y movimiento"]},
+"Synthesia":{mark:"SY",access:"limited",accessText:"Permite crear video gratuito de prueba; planes pagos amplían uso",url:"https://www.synthesia.io/",what:"Plataforma para crear videos con avatares y voces generadas por IA.",use:"Cuando querés explorar presencia audiovisual, explicación guiada o representación mediante una figura hablante.",q:"¿El avatar aporta una función comunicativa necesaria o introduce una apariencia de presencia que no agrega valor didáctico?",conn:["Voz y movimiento"]},
+"CapCut":{mark:"CC",access:"limited",accessText:"Funciones gratuitas + funciones Pro",url:"https://www.capcut.com/",what:"Editor audiovisual con herramientas de IA para montaje, subtítulos, voz, recorte, fondo y transformación de piezas.",use:"Cuando ya tenés distintos materiales y necesitás ensamblarlos, editar ritmo, incorporar subtítulos o articular imagen, texto y sonido.",q:"¿Qué relaciones entre las piezas construye el montaje? Editar también es producir sentido.",conn:["Hacer visible","Voz y movimiento"]},
+"H5P":{mark:"H5P",access:"inst",accessText:"Depende de la disponibilidad en Moodle/institución",url:"https://h5p.org/",what:"Entorno para crear contenidos interactivos: recorridos, preguntas, videos interactivos, presentaciones y otros tipos de actividad.",use:"Cuando querés convertir contenidos producidos con otras herramientas en una experiencia donde el estudiante tenga que actuar.",q:"¿La interacción exige una decisión cognitiva significativa o se limita a hacer clic para avanzar?",conn:["Hacer participar","Hacer visible"]},
+"Wolfram Alpha":{mark:"WA",access:"limited",accessText:"Acceso básico gratuito; funciones avanzadas Pro",url:"https://www.wolframalpha.com/",what:"Motor de conocimiento computacional para cálculos, gráficos, datos, ecuaciones y modelización.",use:"Cuando el material necesita mostrar relaciones matemáticas, resolver cálculos, explorar datos o visualizar comportamientos.",q:"¿La respuesta final permite comprender el modelo o puede ocultar el razonamiento que el estudiante necesita construir?",conn:["Probar y modelizar","Hacer visible"]},
+"Zoo Design Studio":{mark:"ZOO",access:"limited",accessText:"Acceso y límites según plan vigente",url:"https://zoo.dev/",what:"Entorno de diseño y CAD asistido por IA para crear y modificar modelos mediante lenguaje natural y herramientas técnicas.",use:"Cuando necesitás explorar cómo una descripción puede transformarse en geometría o diseño técnico editable.",q:"¿El modelo generado responde a restricciones técnicas reales o solo a una descripción aproximada de la forma?",conn:["Probar y modelizar","Hacer visible"]},
+"zCAD.ai":{mark:"ZC",access:"limited",accessText:"Créditos gratuitos limitados; revisar privacidad del plan",url:"https://zcad.ai/",what:"Herramienta de CAD asistido por IA orientada a generación y modificación de modelos técnicos.",use:"Cuando querés experimentar con producción técnica a partir de instrucciones y revisar luego el resultado en términos de precisión.",q:"¿Qué datos, diseños o modelos estás compartiendo y bajo qué condiciones de privacidad y reutilización?",conn:["Probar y modelizar","Hacer visible"]},
+"ELSA Speak":{mark:"EL",access:"limited",accessText:"Funciones gratuitas limitadas / suscripción para acceso ampliado",url:"https://elsaspeak.com/",what:"IA para analizar producción oral en inglés y ofrecer retroalimentación sobre pronunciación, fluidez y otros aspectos del habla.",use:"Cuando el material necesita escuchar al usuario y devolver información sobre su producción oral.",q:"¿Qué dimensiones de la oralidad puede medir la herramienta y cuáles quedan fuera de aquello que cuantifica?",conn:["Probar y modelizar","Voz y movimiento","Hacer participar"]}
+};
+
+const nodes={
+center:{title:"Mi MDD",accent:"#112b40",lead:"El material está en el centro. Los nodos no son etapas ni una receta: son posibilidades que podés combinar según tu propósito de enseñanza.",critical:"El recorrido no empieza en una tecnología. Empieza en una decisión sobre qué experiencia querés construir.",ops:[
+ {name:"Explorá la trama",desc:"Entrá por cualquier nodo. Volvé, cruzá, combiná. Una misma herramienta puede servir para operaciones diferentes.",tools:[]}
+]},
+think:{title:"Pensar y explorar",accent:"#456e63",lead:"Antes de producir una pieza, la IA puede funcionar como espacio para preguntar, buscar, relacionar, contrastar y ensayar alternativas.",critical:"Generar muchas respuestas no equivale a pensar mejor. La pregunta es qué nuevas relaciones, dudas o criterios habilita la interacción.",ops:[
+{name:"Abrir alternativas",desc:"Imaginar más de una posibilidad antes de elegir.",tools:["ChatGPT","Claude","Gemini","DeepSeek","Meta AI"]},
+{name:"Buscar y contrastar",desc:"Ampliar una búsqueda, localizar fuentes y seguir pistas para verificar.",tools:["Perplexity","ChatGPT","Gemini"]},
+{name:"Explorar mis propias fuentes",desc:"Interrogar y relacionar un corpus seleccionado por vos.",tools:["NotebookLM"]},
+{name:"Cambiar de perspectiva",desc:"Ensayar otras voces, posiciones, disciplinas o puntos de vista.",tools:["ChatGPT","Claude","Gemini","Character.AI"]},
+{name:"Poner a prueba una idea",desc:"Pedir objeciones, detectar supuestos, encontrar límites y contraargumentos.",tools:["ChatGPT","Claude","Gemini","DeepSeek"]}
+]},
+visual:{title:"Hacer visible",accent:"#c88c2b",lead:"Representar aquello que no necesariamente tiene forma: conceptos, relaciones, procesos, escenas, datos y modelos.",critical:"Una visualización nunca es neutra: selecciona, jerarquiza, relaciona y deja cosas afuera.",ops:[
+{name:"Crear algo que no existe",desc:"Producir una escena, objeto, ambiente o representación desde una descripción.",tools:["ChatGPT Images","Gemini","Adobe Firefly"]},
+{name:"Representar una idea",desc:"Buscar una metáfora o forma visual para un concepto que no se ve directamente.",tools:["ChatGPT Images","Gemini","Adobe Firefly"]},
+{name:"Transformar información",desc:"Pasar de texto o datos a diagramas, mapas, infografías u otras formas visuales.",tools:["Napkin AI","Canva IA","Gamma","NotebookLM"]},
+{name:"Modificar una imagen",desc:"Editar, quitar, agregar o transformar elementos de una imagen existente.",tools:["ChatGPT Images","Adobe Firefly","Gemini"]},
+{name:"Visualizar datos, relaciones o modelos",desc:"Hacer visible una relación matemática, técnica o computacional.",tools:["Wolfram Alpha","Zoo Design Studio","zCAD.ai"]}
+]},
+words:{title:"Trabajar con las palabras",accent:"#a75d66",lead:"Escribir, reorganizar, adaptar y transformar información sin confundir generación con autoría.",critical:"La fluidez verbal puede dar apariencia de cierre. Revisar implica volver sobre conceptos, fuentes, destinatarios y decisiones de escritura.",ops:[
+{name:"Escribir y reformular",desc:"Ensayar versiones, cambiar estructuras y trabajar iterativamente sobre un texto.",tools:["ChatGPT","Claude","Gemini","DeepSeek"]},
+{name:"Adaptar registros y destinatarios",desc:"Transformar una explicación según audiencia, género o propósito comunicativo.",tools:["ChatGPT","Claude","Gemini"]},
+{name:"Sintetizar o expandir",desc:"Reducir, desarrollar o reorganizar información preservando relaciones relevantes.",tools:["Claude","ChatGPT","NotebookLM"]},
+{name:"Trabajar desde fuentes",desc:"Producir sobre un conjunto explícito de materiales y conservar el vínculo con ellos.",tools:["NotebookLM","Perplexity"]},
+{name:"Pasar del texto a otra forma",desc:"Usar la palabra como punto de partida para un diagrama, una pieza visual o audiovisual.",tools:["Napkin AI","Gamma","NotebookLM","Canva IA"]}
+]},
+motion:{title:"Dar voz y movimiento",accent:"#d87557",lead:"Explorar qué ocurre cuando el material también puede escucharse, narrarse, musicalizarse, animarse o montarse.",critical:"Voz, música, ritmo y montaje no son decoración: orientan la atención, construyen tono e intervienen en la interpretación.",ops:[
+{name:"Narrar y generar voces",desc:"Convertir un contenido en una experiencia sonora y trabajar presencia, ritmo y entonación.",tools:["ElevenLabs","NotebookLM"]},
+{name:"Crear sonido o música",desc:"Producir música, climas o piezas sonoras que formen parte del significado.",tools:["Suno","Adobe Firefly"]},
+{name:"Generar video o avatar",desc:"Experimentar con explicación audiovisual, movimiento y figuras hablantes.",tools:["Synthesia","Adobe Firefly","Canva IA"]},
+{name:"Editar y ensamblar",desc:"Montar piezas producidas en distintos medios, incorporar subtítulos, voz, imagen y ritmo.",tools:["CapCut","Canva IA"]},
+{name:"Escuchar producción oral",desc:"Hacer que el material reciba una voz y devuelva información sobre esa producción.",tools:["ELSA Speak"]}
+]},
+interact:{title:"Hacer participar",accent:"#78628f",lead:"Pensar materiales que no solo se leen o miran: también pueden responder, conversar, ofrecer decisiones o habilitar recorridos.",critical:"La interactividad tiene valor cuando modifica lo que el estudiante necesita observar, decidir, producir o revisar.",ops:[
+{name:"Crear personajes o interlocutores",desc:"Construir una presencia conversacional con una voz y perspectiva determinadas.",tools:["Character.AI","ChatGPT","Claude","Gemini"]},
+{name:"Conversar con contenidos",desc:"Permitir preguntas, exploraciones o diálogos alrededor de información y fuentes.",tools:["NotebookLM","ChatGPT","Claude","Gemini"]},
+{name:"Construir asistentes",desc:"Configurar un interlocutor orientado a una tarea, proceso o tipo de acompañamiento.",tools:["ChatGPT","Claude","Gemini"]},
+{name:"Crear experiencias o artefactos",desc:"Producir pequeñas interfaces, simulaciones o piezas interactivas.",tools:["Claude","ChatGPT","Gamma"]},
+{name:"Construir recorridos interactivos",desc:"Organizar decisiones, preguntas y retroalimentaciones en un contenido navegable.",tools:["H5P"]}
+]},
+model:{title:"Probar y modelizar",accent:"#4b7b99",lead:"Calcular, graficar, simular, diseñar técnicamente y experimentar con modelos, datos o lenguajes especializados.",critical:"Un modelo permite explorar ciertos rasgos de un fenómeno porque necesariamente simplifica otros. La pregunta es qué hace visible y qué deja fuera.",ops:[
+{name:"Calcular y resolver",desc:"Trabajar con operaciones, ecuaciones, unidades y conocimiento computacional.",tools:["Wolfram Alpha"]},
+{name:"Graficar y explorar relaciones",desc:"Visualizar funciones, datos, relaciones matemáticas y comportamientos.",tools:["Wolfram Alpha"]},
+{name:"Modelizar objetos y geometrías",desc:"Transformar descripciones y restricciones en modelos técnicos.",tools:["Zoo Design Studio","zCAD.ai"]},
+{name:"Experimentar con CAD e IA",desc:"Probar modificaciones, variantes y operaciones de diseño asistidas por lenguaje.",tools:["Zoo Design Studio","zCAD.ai"]},
+{name:"Analizar producción oral",desc:"Experimentar con una IA que escucha y devuelve datos sobre una actuación lingüística.",tools:["ELSA Speak"]}
+]}
+};
+
+function accessDot(a){return a==="free"?"#5b8a69":a==="inst"?"#7a7998":"#d2a343"}
+function openNode(key){
+ const n=nodes[key];
+ let html=`<div class="eyebrow">Una posibilidad para tu MDD</div><h2>${n.title}</h2><p class="lead">${n.lead}</p>`;
+ n.ops.forEach((o,i)=>{
+   const chips=o.tools.map(t=>`<button class="chip" onclick='openTool(${JSON.stringify(t)})'>${t}</button>`).join("");
+   html+=`<section class="operation"><button class="ophead" onclick="toggleOp(this)"><b>${o.name}</b><span>＋</span></button><div class="opbody"><p class="opdesc">${o.desc}</p>${chips?`<div class="chips">${chips}</div>`:""}${key==="center"?`<div class="linknote">Probá entrar por una acción que te interese, no por una marca. Las conexiones aparecen cuando una herramienta puede habitar más de un nodo.</div>`:""}</div></section>`;
+ });
+ html+=`<div class="nodecrit" style="--accent:${n.accent}"><b>Para mirar críticamente</b>${n.critical}</div>`;
+ document.getElementById("drawerContent").innerHTML=html;
+ document.getElementById("drawer").classList.add("on");
+ setTimeout(()=>{const first=document.querySelector(".opbody"); if(first) first.classList.add("on")},20);
+}
+function toggleOp(btn){const body=btn.nextElementSibling;body.classList.toggle("on");btn.querySelector("span").textContent=body.classList.contains("on")?"−":"＋"}
+function closeNode(){document.getElementById("drawer").classList.remove("on")}
+function openTool(name){
+ const t=tools[name]; if(!t)return;
+ const special=t.special?`<div class="special"><b>Un mismo corpus puede abrir varias salidas:</b><div>${t.special.map(s=>`<span>${s}</span>`).join("")}</div></div>`:"";
+ document.getElementById("modal").innerHTML=`
+ <button class="x" onclick="closeTool()">×</button>
+ <div class="tooltop"><div class="toolmark">${t.mark}</div><div><h3>${name}</h3><div class="tag"><i class="dot" style="background:${accessDot(t.access)}"></i>${t.accessText}</div></div></div>
+ <h4>Qué permite</h4><p>${t.what}</p>
+ <h4>Explorala si necesitás...</h4><p>${t.use}</p>
+ ${special}
+ <h4>Para mirar críticamente</h4><p class="question">${t.q}</p>
+ <h4>También conecta con</h4><div class="connections">${t.conn.map(c=>`<span class="conn">${c}</span>`).join("")}</div>
+ <a class="visit" href="${t.url}" target="_blank" rel="noopener noreferrer">Explorar ${name} ↗</a>
+ <p class="note">Las funciones, condiciones de acceso y límites pueden modificarse. Revisá la información del servicio antes de incorporarlo a una propuesta de enseñanza.</p>`;
+ document.getElementById("modalwrap").classList.add("on")
+}
+function closeTool(){document.getElementById("modalwrap").classList.remove("on")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeTool();closeNode()}})
+
+const nodeEls=[...document.querySelectorAll(".node[data-key]")];
+const pathEls=[...document.querySelectorAll(".path[data-a]")];
+function weaveFocus(key){
+  const related=new Set([key]);
+  pathEls.forEach(p=>{
+    const hit=p.dataset.a===key||p.dataset.b===key;
+    p.classList.toggle("active",hit);
+    if(hit){related.add(p.dataset.a);related.add(p.dataset.b)}
+  });
+  nodeEls.forEach(n=>{
+    const k=n.dataset.key;
+    n.classList.toggle("dim",!related.has(k));
+    n.classList.toggle("related",related.has(k)&&k!==key);
+  });
+}
+function weaveReset(){
+  pathEls.forEach(p=>p.classList.remove("active"));
+  nodeEls.forEach(n=>n.classList.remove("dim","related"));
+}
+nodeEls.forEach(n=>{
+  n.addEventListener("mouseenter",()=>weaveFocus(n.dataset.key));
+  n.addEventListener("mouseleave",weaveReset);
+  n.addEventListener("focus",()=>weaveFocus(n.dataset.key));
+  n.addEventListener("blur",weaveReset);
+});
+
+</script>
+</body>
+</html>
